@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, sans-serif;
+      --bg: #eef4f8;
+      --surface: #f8fbff;
+      --surface-border: #c9d8e6;
+      --text: #203040;
+      --muted: #53697d;
+      --button-bg: #e1ecf6;
+      --button-border: #b4c7d9;
+      --button-hover: #d5e4f2;
+      --button-active: #c6d9ea;
+      --accent: #3f7f93;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: dark;
+        --bg: #0e151b;
+        --surface: #15202a;
+        --surface-border: #2a3a47;
+        --text: #d8e6ef;
+        --muted: #9db2c2;
+        --button-bg: #1d2c38;
+        --button-border: #324657;
+        --button-hover: #243746;
+        --button-active: #2a3f50;
+        --accent: #7cb7c7;
+      }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 20vw minmax(0, 1fr);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .sidebar {
+      width: 20vw;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 1rem 0.75rem;
+      border-right: 1px solid var(--surface-border);
+      overflow: auto;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 1rem;
+    }
+
+    .sidebar-top {
+      border-bottom: 1px solid var(--surface-border);
+      padding: 0 10% 0.75rem;
+      display: grid;
+      justify-items: start;
+      text-align: left;
+    }
+
+    .sidebar-top .summary {
+      width: max-content;
+      margin: 0 auto;
+      justify-items: stretch;
+      text-align: left;
+    }
+
+    .sidebar-bottom {
+      min-height: 0;
+    }
+
+    .sidebar-title {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .saved-list {
+      list-style: none;
+      margin: 0.75rem 0 0;
+      padding: 0;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .saved-list li {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      column-gap: 0.35em;
+      align-items: baseline;
+      width: max-content;
+      margin: 0 auto;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.45rem;
+      white-space: nowrap;
+    }
+
+    .saved-line-label {
+      text-align: right;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .saved-line-value {
+      text-align: left;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .saved-empty {
+      color: var(--muted);
+    }
+
+    .sidebar-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .main-area {
+      min-height: 100vh;
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+
+    .app {
+      width: min(1400px, 100%);
+      min-width: 0;
+      padding: 1rem;
+      box-sizing: border-box;
+      container-type: inline-size;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.25rem;
+    }
+
+    .time {
+      font-size: clamp(3rem, 21cqw, 20rem);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+      margin: 0.75rem 0;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      line-height: 1;
+    }
+
+    .time-main {
+      font-size: 1em;
+      flex: 0 0 auto;
+    }
+
+    /* width:0 + overflow:visible keeps the decimals out of the centering math,
+       so the button bar below aligns with the big minutes:seconds digits */
+    .time-decimals {
+      flex: 0 0 auto;
+      width: 0;
+      overflow: visible;
+      display: flex;
+      align-items: baseline;
+      white-space: nowrap;
+      transform: translateX(0.12em);
+    }
+
+    .time-ms {
+      font-size: 0.333em;
+    }
+
+    .time-sep {
+      font-size: 0.333em;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    button {
+      border: 1px solid var(--button-border);
+      background: var(--button-bg);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      transition: background-color 120ms ease;
+    }
+
+    button:not(:disabled):hover {
+      background: var(--button-hover);
+    }
+
+    button:not(:disabled):active {
+      background: var(--button-active);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      column-gap: 0.35em;
+      row-gap: 0.25rem;
+      align-items: baseline;
+      justify-items: stretch;
+      text-align: left;
+    }
+
+    .summary-label {
+      text-align: right;
+    }
+
+    .summary-value {
+      text-align: left;
+      font-weight: 400;
+    }
+
+    .summary-ao-label {
+      font-size: 1.45rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+    }
+
+    .summary-ao-value {
+      font-size: 1.45rem;
+      font-weight: 400 !important;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+
+    .hint {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" aria-label="Saved times">
+    <section class="sidebar-top">
+      <section class="summary">
+        <span class="summary-label summary-ao-label">AO5:</span><strong id="average" class="summary-value summary-ao-value">—</strong>
+        <span class="summary-label summary-ao-label">AO12:</span><strong id="ao12" class="summary-value summary-ao-value">—</strong>
+        <span class="summary-label summary-ao-label">AO50:</span><strong id="ao50" class="summary-value summary-ao-value">—</strong>
+        <span class="summary-label summary-ao-label">AO100:</span><strong id="ao100" class="summary-value summary-ao-value">—</strong>
+      </section>
+    </section>
+
+    <section class="sidebar-bottom">
+      <h2 class="sidebar-title">Saved Times</h2>
+      <ol id="savedList" class="saved-list"></ol>
+      <div class="sidebar-actions">
+        <button id="clearBtn" type="button">Clear Saved</button>
+      </div>
+    </section>
+  </aside>
+
+  <div class="main-area">
+    <main class="app" aria-live="polite">
+      <p id="display" class="time">00:00.000</p>
+
+      <div class="controls">
+        <button id="startPauseBtn" type="button">Start</button>
+        <button id="resetBtn" type="button">Reset</button>
+        <button id="saveBtn" type="button" disabled>Save Time</button>
+      </div>
+
+      <p class="hint">Keybinds: Space = Start/Stop, R = Reset, S = Save Time</p>
+      <p class="hint">All saved times stay in your browser via local storage.</p>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'local_stopwatch_saved_times_ms_v1';
+    const display = document.getElementById('display');
+    const startPauseBtn = document.getElementById('startPauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const averageEl = document.getElementById('average');
+    const ao12El = document.getElementById('ao12');
+    const ao50El = document.getElementById('ao50');
+    const ao100El = document.getElementById('ao100');
+    const savedListEl = document.getElementById('savedList');
+
+    let running = false;
+    let elapsedMs = 0;
+    let startTimestamp = 0;
+    let timerId = null;
+
+    let savedTimes = loadSavedTimes();
+
+    function formatMs(totalMs) {
+      const ms = totalMs % 1000;
+      const totalSeconds = Math.floor(totalMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+    }
+
+    function calculateTrimmedAverage(windowTimes) {
+      const trimCount = Math.ceil(windowTimes.length * 0.05);
+      const sorted = windowTimes.slice().sort((a, b) => a - b);
+      const kept = sorted.slice(trimCount, sorted.length - trimCount);
+      const total = kept.reduce((sum, value) => sum + value, 0);
+      return Math.round(total / kept.length);
+    }
+
+    function calculateAverageOf(windowSize) {
+      if (savedTimes.length < windowSize) {
+        return null;
+      }
+      return calculateTrimmedAverage(savedTimes.slice(-windowSize));
+    }
+
+    function getCurrentElapsed() {
+      if (!running) {
+        return elapsedMs;
+      }
+      return elapsedMs + (Date.now() - startTimestamp);
+    }
+
+    function renderDisplay() {
+      const formatted = formatMs(getCurrentElapsed());
+      const [mainPart, msPart = '000'] = formatted.split('.');
+      display.innerHTML = `<span class="time-main">${mainPart}</span><span class="time-decimals"><span class="time-sep">.</span><span class="time-ms">${msPart}</span></span>`;
+    }
+
+    function renderSaved() {
+      if (savedTimes.length === 0) {
+        savedListEl.innerHTML = '<li class="saved-empty">No saved times yet</li>';
+      } else {
+        const items = savedTimes
+          .map((value, index) => `<li><span class="saved-line-label">#${index + 1}</span><span class="saved-line-value">${formatMs(value)}</span></li>`)
+          .join('');
+        savedListEl.innerHTML = items;
+      }
+
+      const currentAo12 = calculateAverageOf(12);
+      const currentAo50 = calculateAverageOf(50);
+      const currentAo100 = calculateAverageOf(100);
+
+      ao12El.textContent = currentAo12 === null ? '—' : formatMs(currentAo12);
+      ao50El.textContent = currentAo50 === null ? '—' : formatMs(currentAo50);
+      ao100El.textContent = currentAo100 === null ? '—' : formatMs(currentAo100);
+
+      if (savedTimes.length < 5) {
+        averageEl.textContent = '—';
+        return;
+      }
+
+      const currentAo5 = calculateAverageOf(5);
+      averageEl.textContent = formatMs(currentAo5);
+    }
+
+    function syncButtons() {
+      startPauseBtn.textContent = running ? 'Stop' : 'Start';
+      saveBtn.disabled = running || getCurrentElapsed() === 0;
+    }
+
+    function tick() {
+      renderDisplay();
+      syncButtons();
+      timerId = requestAnimationFrame(tick);
+    }
+
+    function start() {
+      if (running) {
+        return;
+      }
+      running = true;
+      startTimestamp = Date.now();
+      timerId = requestAnimationFrame(tick);
+      syncButtons();
+    }
+
+    function pause() {
+      if (!running) {
+        return;
+      }
+      const currentElapsed = getCurrentElapsed();
+      running = false;
+      elapsedMs = currentElapsed;
+      cancelAnimationFrame(timerId);
+      timerId = null;
+      renderDisplay();
+      syncButtons();
+    }
+
+    function reset() {
+      pause();
+      elapsedMs = 0;
+      renderDisplay();
+      syncButtons();
+    }
+
+    function saveCurrentTime() {
+      if (running) {
+        return;
+      }
+      const current = getCurrentElapsed();
+      if (current === 0) {
+        return;
+      }
+      savedTimes.push(current);
+      persistSavedTimes();
+
+      renderSaved();
+      elapsedMs = 0;
+      renderDisplay();
+      syncButtons();
+    }
+
+    function clearSavedTimes() {
+      savedTimes = [];
+      persistSavedTimes();
+      renderSaved();
+    }
+
+    function loadSavedTimes() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          return [];
+        }
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          return [];
+        }
+        return parsed.filter((value) => Number.isInteger(value) && value >= 0);
+      } catch {
+        return [];
+      }
+    }
+
+    function persistSavedTimes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedTimes));
+    }
+
+    startPauseBtn.addEventListener('click', () => {
+      if (running) {
+        pause();
+      } else {
+        start();
+      }
+    });
+
+    resetBtn.addEventListener('click', reset);
+    saveBtn.addEventListener('click', saveCurrentTime);
+    clearBtn.addEventListener('click', clearSavedTimes);
+
+    document.addEventListener('keydown', (event) => {
+      const target = event.target;
+      const isTypingTarget = target instanceof HTMLElement && (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      );
+
+      if (isTypingTarget) {
+        return;
+      }
+
+      if (event.code === 'Space') {
+        event.preventDefault();
+        if (running) {
+          pause();
+        } else {
+          start();
+        }
+      }
+
+      if (event.code === 'KeyR') {
+        event.preventDefault();
+        reset();
+      }
+
+      if (event.code === 'KeyS') {
+        event.preventDefault();
+        saveCurrentTime();
+      }
+    });
+
+    renderDisplay();
+    renderSaved();
+    syncButtons();
+  </script>
+</body>
+</html>
