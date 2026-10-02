@@ -102,7 +102,7 @@ function renderSaved() {
     const items = savedTimes
       .map((value, index) => {
         const valueClass = value === 'DNF' ? 'saved-line-value dnf' : 'saved-line-value';
-        return `<li><span class="saved-line-label">#${index + 1}</span><span class="${valueClass}">${formatResult(value)}</span></li>`;
+        return `<li><span class="saved-line-label">#${index + 1}</span><span class="${valueClass}">${formatResult(value)}</span><button type="button" class="saved-line-delete" data-index="${index}" aria-label="Delete solve #${index + 1}">✕</button></li>`;
       })
       .join('');
     savedListEl.innerHTML = items;
@@ -206,6 +206,15 @@ function persistSavedTimes() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(savedTimes));
 }
 
+function deleteSavedTime(index) {
+  if (index < 0 || index >= savedTimes.length) {
+    return;
+  }
+  savedTimes.splice(index, 1);
+  persistSavedTimes();
+  renderSaved();
+}
+
 startPauseBtn.addEventListener('click', () => {
   if (running) {
     pause();
@@ -217,6 +226,14 @@ startPauseBtn.addEventListener('click', () => {
 resetBtn.addEventListener('click', reset);
 saveBtn.addEventListener('click', saveCurrentTime);
 clearBtn.addEventListener('click', clearSavedTimes);
+
+savedListEl.addEventListener('click', (event) => {
+  const deleteBtn = event.target.closest('.saved-line-delete');
+  if (!deleteBtn) {
+    return;
+  }
+  deleteSavedTime(Number(deleteBtn.dataset.index));
+});
 
 document.addEventListener('keydown', (event) => {
   const target = event.target;

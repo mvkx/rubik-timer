@@ -98,7 +98,7 @@ body {
 
 .saved-list li {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content 1fr max-content;
   column-gap: 0.35em;
   align-items: baseline;
   width: max-content;
@@ -127,6 +127,34 @@ body {
 .saved-line-value.dnf {
   color: var(--dnf);
   font-weight: 600;
+}
+
+.saved-line-delete {
+  border: none;
+  background: none;
+  padding: 0 0.15em;
+  font-size: 0.8em;
+  line-height: 1;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease;
+}
+
+.saved-line-delete:hover {
+  background: none;
+  color: var(--dnf);
+}
+
+.saved-list li:hover .saved-line-delete,
+.saved-line-delete:focus-visible {
+  opacity: 1;
+}
+
+/* hover doesn't exist on touch devices, so keep the control reachable there */
+@media (hover: none), (pointer: coarse) {
+  .saved-line-delete {
+    opacity: 1;
+  }
 }
 
 .sidebar-actions {
