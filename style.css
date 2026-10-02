@@ -12,6 +12,7 @@
   --button-active: #c6d9ea;
   --accent: #3f7f93;
   --dnf: #b3261e;
+  --best: #a8620a;
   --ready: #2f9e44;
 }
 
@@ -29,6 +30,7 @@
     --button-active: #2a3f50;
     --accent: #7cb7c7;
     --dnf: #e2756b;
+    --best: #e3b341;
     --ready: #4ec97b;
   }
 }
@@ -127,6 +129,39 @@ body {
 .saved-line-value.dnf {
   color: var(--dnf);
   font-weight: 600;
+}
+
+.saved-list li.best .saved-line-label::before {
+  content: "★";
+  color: var(--best);
+}
+
+.saved-list li.best .saved-line-value:not(.dnf) {
+  color: var(--best);
+  font-weight: 600;
+}
+
+.saved-list li.out-of-window {
+  opacity: 0.35;
+}
+
+.saved-list li.trim-low .saved-line-value,
+.saved-list li.trim-high .saved-line-value {
+  color: var(--muted);
+}
+
+.saved-list li.trim-low .saved-line-value::before,
+.saved-list li.trim-high .saved-line-value::before {
+  content: "(";
+}
+
+.saved-list li.trim-low .saved-line-value::after,
+.saved-list li.trim-high .saved-line-value::after {
+  content: ")";
+}
+
+.summary [data-n] {
+  cursor: pointer;
 }
 
 .saved-line-delete {

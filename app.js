@@ -20,6 +20,8 @@ let isArmed = false;
 let holdTimeoutId = null;
 
 let savedTimes = loadSavedTimes();
+let hoverWindow = null;
+let pinnedWindow = null;
 
 function formatMs(totalMs) {
   const ms = totalMs % 1000;
@@ -39,20 +41,62 @@ function setResultText(el, value) {
   el.classList.toggle('dnf', value === 'DNF');
 }
 
+// Ties trim the earlier solve first so highlighting is deterministic.
+function getTrimPlan(windowTimes) {
+  const trimCount = Math.ceil(windowTimes.length * 0.05);
+  const key = (i) => (windowTimes[i] === 'DNF' ? Infinity : windowTimes[i]);
+  const order = windowTimes
+    .map((_, i) => i)
+    .sort((a, b) => (key(a) === key(b) ? a - b : key(a) < key(b) ? -1 : 1));
+  return {
+    trimCount,
+    low: order.slice(0, trimCount),
+    high: order.slice(order.length - trimCount),
+    kept: order.slice(trimCount, order.length - trimCount),
+  };
+}
+
 function calculateTrimmedAverage(windowTimes) {
   // WCA rule: a DNF sorts as the worst result; the average itself becomes
   // DNF only if more DNFs remain than the trim count can discard.
-  const trimCount = Math.ceil(windowTimes.length * 0.05);
+  const { trimCount, kept } = getTrimPlan(windowTimes);
   const dnfCount = windowTimes.filter((value) => value === 'DNF').length;
   if (dnfCount > trimCount) {
     return 'DNF';
   }
-  const sorted = windowTimes
-    .slice()
-    .sort((a, b) => (a === 'DNF' ? Infinity : a) - (b === 'DNF' ? Infinity : b));
-  const kept = sorted.slice(trimCount, sorted.length - trimCount);
-  const total = kept.reduce((sum, value) => sum + value, 0);
+  const total = kept.reduce((sum, i) => sum + windowTimes[i], 0);
   return Math.round(total / kept.length);
+}
+
+function getBestIndex() {
+  let best = -1;
+  savedTimes.forEach((value, index) => {
+    if (value !== 'DNF' && (best === -1 || value < savedTimes[best])) {
+      best = index;
+    }
+  });
+  return best;
+}
+
+function applyHighlight() {
+  const windowSize = hoverWindow ?? pinnedWindow;
+  const items = savedListEl.querySelectorAll('li[data-index]');
+  items.forEach((li) => li.classList.remove('out-of-window', 'trim-low', 'trim-high'));
+  if (windowSize === null || savedTimes.length < windowSize) {
+    return;
+  }
+  const start = savedTimes.length - windowSize;
+  const plan = getTrimPlan(savedTimes.slice(start));
+  items.forEach((li) => {
+    const index = Number(li.dataset.index);
+    if (index < start) {
+      li.classList.add('out-of-window');
+    } else if (plan.low.includes(index - start)) {
+      li.classList.add('trim-low');
+    } else if (plan.high.includes(index - start)) {
+      li.classList.add('trim-high');
+    }
+  });
 }
 
 function calculateAverageOf(windowSize) {
@@ -98,10 +142,12 @@ function renderSaved() {
   if (savedTimes.length === 0) {
     savedListEl.innerHTML = '<li class="saved-empty">No saved times yet</li>';
   } else {
+    const bestIndex = getBestIndex();
     const items = savedTimes
       .map((value, index) => {
         const valueClass = value === 'DNF' ? 'saved-line-value dnf' : 'saved-line-value';
-        return `<li><span class="saved-line-label">#${index + 1}</span><span class="${valueClass}">${formatResult(value)}</span><button type="button" class="saved-line-delete" data-index="${index}" aria-label="Delete solve #${index + 1}">✕</button></li>`;
+        const itemClass = index === bestIndex ? ' class="best"' : '';
+        return `<li data-index="${index}"${itemClass}><span class="saved-line-label">#${index + 1}</span><span class="${valueClass}">${formatResult(value)}</span><button type="button" class="saved-line-delete" data-index="${index}" aria-label="Delete solve #${index + 1}">✕</button></li>`;
       })
       .join('');
     savedListEl.innerHTML = items;
@@ -111,6 +157,7 @@ function renderSaved() {
   setResultText(ao50El, calculateAverageOf(50));
   setResultText(ao100El, calculateAverageOf(100));
   setResultText(averageEl, savedTimes.length < 5 ? null : calculateAverageOf(5));
+  applyHighlight();
 }
 
 function syncButtons() {
@@ -226,6 +273,42 @@ startPauseBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', reset);
 clearBtn.addEventListener('click', clearSavedTimes);
+
+const summaryEl = document.querySelector('.summary');
+
+function windowFromEvent(event) {
+  const el = event.target.closest('[data-n]');
+  return el ? Number(el.dataset.n) : null;
+}
+
+// Mouse hover previews a window; click pins it (also how touch users reach it).
+summaryEl.addEventListener('pointerover', (event) => {
+  if (event.pointerType === 'mouse') {
+    hoverWindow = windowFromEvent(event);
+    applyHighlight();
+  }
+});
+summaryEl.addEventListener('pointerout', (event) => {
+  if (event.pointerType === 'mouse') {
+    hoverWindow = null;
+    applyHighlight();
+  }
+});
+summaryEl.addEventListener('focusin', (event) => {
+  hoverWindow = windowFromEvent(event);
+  applyHighlight();
+});
+summaryEl.addEventListener('focusout', () => {
+  hoverWindow = null;
+  applyHighlight();
+});
+summaryEl.addEventListener('click', (event) => {
+  const n = windowFromEvent(event);
+  if (n !== null) {
+    pinnedWindow = pinnedWindow === n ? null : n;
+    applyHighlight();
+  }
+});
 
 savedListEl.addEventListener('click', (event) => {
   const deleteBtn = event.target.closest('.saved-line-delete');
