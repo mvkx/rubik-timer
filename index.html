@@ -35,11 +35,16 @@
         <button id="resetBtn" type="button">Reset</button>
         <button id="saveBtn" type="button" disabled>Save Time</button>
       </div>
-
-      <p class="hint">Keybinds: Space = Start/Stop, R = Reset, S = Save Time</p>
-      <p class="hint">Resetting a running or unsaved solve logs it as a DNF. Start again after Reset or Save Time.</p>
-      <p class="hint">All saved times stay in your browser via local storage.</p>
     </main>
+  </div>
+
+  <div class="help-widget">
+    <button type="button" class="help-icon" aria-label="Help" aria-describedby="helpPanel">?</button>
+    <div id="helpPanel" class="help-panel" role="tooltip">
+      <p>Keybinds: Space = Start/Stop, R = Reset, S = Save Time</p>
+      <p>Resetting a running or unsaved solve logs it as a DNF. Start again after Reset or Save Time.</p>
+      <p>All saved times stay in your browser via local storage.</p>
+    </div>
   </div>
 
   <script src="app.js"></script>

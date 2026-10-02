@@ -300,9 +300,58 @@ button:disabled {
   color: var(--dnf);
 }
 
-.hint {
-  margin-top: 0.75rem;
+.help-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+}
+
+.help-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.help-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: max(16rem, 20vw);
+  max-width: calc(100vw - 2rem);
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   font-size: 0.85rem;
   color: var(--muted);
-  text-align: center;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 120ms ease, transform 120ms ease, visibility 120ms;
+  pointer-events: none;
+}
+
+.help-panel p {
+  margin: 0 0 0.5rem;
+}
+
+.help-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.help-widget:hover .help-panel,
+.help-widget:focus-within .help-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
