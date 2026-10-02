@@ -49,11 +49,11 @@
 
     .sidebar {
       width: 20vw;
-      min-height: 100vh;
+      height: 100vh;
       box-sizing: border-box;
       padding: 1rem 0.75rem;
       border-right: 1px solid var(--surface-border);
-      overflow: auto;
+      overflow: hidden;
       display: grid;
       grid-template-rows: auto 1fr;
       gap: 1rem;
@@ -76,6 +76,9 @@
 
     .sidebar-bottom {
       min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 0.75rem;
     }
 
     .sidebar-title {
@@ -89,10 +92,13 @@
 
     .saved-list {
       list-style: none;
-      margin: 0.75rem 0 0;
+      margin: 0;
       padding: 0;
       display: grid;
+      align-content: start;
       gap: 0.35rem;
+      min-height: 0;
+      overflow-y: auto;
     }
 
     .saved-list li {
@@ -129,7 +135,6 @@
     }
 
     .sidebar-actions {
-      margin-top: 0.75rem;
       display: flex;
       justify-content: center;
     }
