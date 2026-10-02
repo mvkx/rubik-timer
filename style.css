@@ -1,0 +1,269 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+  --bg: #eef4f8;
+  --surface: #f8fbff;
+  --surface-border: #c9d8e6;
+  --text: #203040;
+  --muted: #53697d;
+  --button-bg: #e1ecf6;
+  --button-border: #b4c7d9;
+  --button-hover: #d5e4f2;
+  --button-active: #c6d9ea;
+  --accent: #3f7f93;
+  --dnf: #b3261e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0e151b;
+    --surface: #15202a;
+    --surface-border: #2a3a47;
+    --text: #d8e6ef;
+    --muted: #9db2c2;
+    --button-bg: #1d2c38;
+    --button-border: #324657;
+    --button-hover: #243746;
+    --button-active: #2a3f50;
+    --accent: #7cb7c7;
+    --dnf: #e2756b;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 20vw minmax(0, 1fr);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.sidebar {
+  width: 20vw;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 1rem 0.75rem;
+  border-right: 1px solid var(--surface-border);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+}
+
+.sidebar-top {
+  border-bottom: 1px solid var(--surface-border);
+  padding: 0 10% 0.75rem;
+  display: grid;
+  justify-items: start;
+  text-align: left;
+}
+
+.sidebar-top .summary {
+  width: max-content;
+  margin: 0 auto;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.sidebar-bottom {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.75rem;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.saved-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.saved-list li {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.35em;
+  align-items: baseline;
+  width: max-content;
+  margin: 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.45rem;
+  white-space: nowrap;
+}
+
+.saved-line-label {
+  text-align: right;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.saved-line-value {
+  text-align: left;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.saved-empty {
+  color: var(--muted);
+}
+
+.saved-line-value.dnf {
+  color: var(--dnf);
+  font-weight: 600;
+}
+
+.sidebar-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.main-area {
+  min-height: 100vh;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.app {
+  width: min(1400px, 100%);
+  min-width: 0;
+  padding: 1rem;
+  box-sizing: border-box;
+  container-type: inline-size;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.time {
+  font-size: clamp(3rem, 21cqw, 20rem);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  margin: 0.75rem 0;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  line-height: 1;
+}
+
+.time-main {
+  font-size: 1em;
+  flex: 0 0 auto;
+}
+
+/* width:0 + overflow:visible keeps the decimals out of the centering math,
+   so the button bar below aligns with the big minutes:seconds digits */
+.time-decimals {
+  flex: 0 0 auto;
+  width: 0;
+  overflow: visible;
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+  transform: translateX(0.12em);
+}
+
+.time-ms {
+  font-size: 0.333em;
+}
+
+.time-sep {
+  font-size: 0.333em;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+button {
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+button:not(:disabled):hover {
+  background: var(--button-hover);
+}
+
+button:not(:disabled):active {
+  background: var(--button-active);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.35em;
+  row-gap: 0.25rem;
+  align-items: baseline;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.summary-label {
+  text-align: right;
+}
+
+.summary-value {
+  text-align: left;
+  font-weight: 400;
+}
+
+.summary-ao-label {
+  font-size: 1.45rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.summary-ao-value {
+  font-size: 1.45rem;
+  font-weight: 400 !important;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.summary-ao-value.dnf {
+  color: var(--dnf);
+}
+
+.hint {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
