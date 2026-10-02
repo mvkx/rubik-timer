@@ -29,6 +29,7 @@
   <div class="main-area">
     <main class="app" aria-live="polite">
       <p id="display" class="time">00:00.000</p>
+      <p id="splits" class="splits" hidden></p>
 
       <div class="controls">
         <button id="startPauseBtn" type="button">Start</button>
@@ -43,6 +44,33 @@
       <div id="settingsPanel" class="help-panel settings-panel">
         <label class="setting"><input type="checkbox" id="inspectionToggle" /> 15s inspection</label>
         <label class="setting"><input type="checkbox" id="plusTwoToggle" /> +2 penalty buttons</label>
+        <label class="setting">Splits
+          <select id="splitsSelect">
+            <option value="0">Off</option>
+            <option value="2">2 phases</option>
+            <option value="3">3 phases</option>
+            <option value="4">4 phases</option>
+            <option value="5">5 phases</option>
+            <option value="6">6 phases</option>
+            <option value="7">7 phases</option>
+            <option value="8">8 phases</option>
+          </select>
+        </label>
+        <label class="setting" id="presetRow" hidden>Preset
+          <select id="presetSelect">
+            <option value="custom">Custom</option>
+            <option value="cfop">CFOP</option>
+            <option value="roux">Roux</option>
+          </select>
+        </label>
+        <div id="splitNames" class="split-names" hidden></div>
+      </div>
+    </div>
+
+    <div class="help-widget" id="statsWidget" hidden>
+      <button type="button" class="help-icon" aria-label="Phase stats" aria-describedby="statsPanel">📊</button>
+      <div id="statsPanel" class="help-panel settings-panel">
+        <div id="phaseStats"></div>
       </div>
     </div>
 
@@ -53,6 +81,7 @@
         <p>The main button cycles Start, Stop, Save. DNF logs a running or unsaved solve as a DNF. Start again after Save or DNF.</p>
         <p>Inspection (optional): the first press starts a 15s countdown. Starting at 15–17s adds +2, past 17s is a DNF. R or Cancel aborts inspection.</p>
         <p>+2 buttons (optional): hover a saved time and click +2 to toggle the penalty.</p>
+        <p>Splits (optional): pick a number of phases, or a CFOP/Roux preset, and name them. While solving, Space (or the Split button) marks the end of a phase; the last press stops the timer. Use the ▾ button on a saved time to see its phases (gold = best so far, ± = vs. your average). The 📊 button shows per-phase stats.</p>
         <p>All saved times stay in your browser via local storage.</p>
       </div>
     </div>

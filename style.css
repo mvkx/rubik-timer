@@ -182,7 +182,8 @@ body {
   overflow: visible;
 }
 
-.saved-line-plus2 {
+.saved-line-plus2,
+.saved-line-splits-btn {
   border: none;
   background: none;
   padding: 0 0.15em;
@@ -195,7 +196,9 @@ body {
 }
 
 .saved-line-plus2:hover,
-.saved-line-plus2.active {
+.saved-line-plus2.active,
+.saved-line-splits-btn:hover,
+.saved-line-splits-btn.active {
   background: none;
   color: var(--accent);
 }
@@ -218,7 +221,10 @@ body {
 
 .saved-list li:hover .saved-line-delete,
 .saved-list li:hover .saved-line-plus2,
+.saved-list li:hover .saved-line-splits-btn,
+.saved-line-splits-btn.active,
 .saved-line-plus2:focus-visible,
+.saved-line-splits-btn:focus-visible,
 .saved-line-delete:focus-visible {
   opacity: 1;
 }
@@ -226,9 +232,129 @@ body {
 /* hover doesn't exist on touch devices, so keep the control reachable there */
 @media (hover: none), (pointer: coarse) {
   .saved-line-delete,
-  .saved-line-plus2 {
+  .saved-line-plus2,
+  .saved-line-splits-btn {
     opacity: 1;
   }
+}
+
+/* contain: inline-size keeps the wrapping row from widening the list's shared columns */
+.saved-line-splits {
+  grid-column: 1 / -1;
+  contain: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  white-space: normal;
+}
+
+.splits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.splits[hidden],
+.setting[hidden],
+.split-names[hidden] {
+  display: none;
+}
+
+.split-names {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.split-name-input {
+  min-width: 0;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  padding: 0.2rem 0.4rem;
+}
+
+.split-best .split-label {
+  color: var(--best);
+}
+
+.split-best {
+  color: var(--best);
+}
+
+.split-delta {
+  font-size: 0.8em;
+}
+
+.split-delta.fast {
+  color: var(--ready);
+}
+
+.split-delta.slow {
+  color: var(--dnf);
+}
+
+.stats-table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.95rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 0.2rem 0.6rem;
+  text-align: right;
+  font-weight: 400;
+}
+
+.stats-table thead th {
+  color: var(--muted);
+}
+
+.stats-table tbody th {
+  text-align: left;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.stats-foot,
+.stats-empty {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.stats-empty {
+  margin: 0;
+}
+
+.split-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.split-current {
+  color: var(--muted);
+}
+
+.setting select {
+  font: inherit;
+  color: var(--text);
+  background: var(--button-bg);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  padding: 0.15rem 0.3rem;
 }
 
 .sidebar-actions {
