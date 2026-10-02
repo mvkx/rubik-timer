@@ -90,7 +90,7 @@ body {
 .saved-list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 1.75rem;
   display: grid;
   align-content: start;
   gap: 0.35rem;
@@ -100,18 +100,19 @@ body {
 
 .saved-list li {
   display: grid;
-  grid-template-columns: max-content 1fr max-content;
+  grid-template-columns: 4.5ch 1fr max-content;
   column-gap: 0.35em;
   align-items: baseline;
   width: max-content;
-  margin: 0 auto;
+  margin: 0;
   font-variant-numeric: tabular-nums;
   font-size: 1.45rem;
   white-space: nowrap;
 }
 
 .saved-line-label {
-  text-align: right;
+  position: relative;
+  text-align: left;
   color: var(--accent);
   font-weight: 600;
 }
@@ -133,6 +134,10 @@ body {
 
 .saved-list li.best .saved-line-label::before {
   content: "★";
+  position: absolute;
+  right: 100%;
+  margin-right: 0.25em;
+  font-size: 0.8em;
   color: var(--best);
 }
 
