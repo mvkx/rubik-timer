@@ -12,6 +12,7 @@
   --button-active: #c6d9ea;
   --accent: #3f7f93;
   --dnf: #b3261e;
+  --ready: #2f9e44;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,6 +29,7 @@
     --button-active: #2a3f50;
     --accent: #7cb7c7;
     --dnf: #e2756b;
+    --ready: #4ec97b;
   }
 }
 
@@ -166,6 +168,15 @@ h1 {
   justify-content: center;
   align-items: baseline;
   line-height: 1;
+  transition: color 80ms ease;
+}
+
+.time.holding {
+  color: var(--dnf);
+}
+
+.time.armed {
+  color: var(--ready);
 }
 
 .time-main {

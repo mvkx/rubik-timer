@@ -15,6 +15,11 @@ let elapsedMs = 0;
 let startTimestamp = 0;
 let timerId = null;
 
+const HOLD_THRESHOLD_MS = 500;
+let isHolding = false;
+let isArmed = false;
+let holdTimeoutId = null;
+
 let savedTimes = loadSavedTimes();
 
 function formatMs(totalMs) {
@@ -65,6 +70,25 @@ function getCurrentElapsed() {
   return elapsedMs + (Date.now() - startTimestamp);
 }
 
+function canStart() {
+  return !running && elapsedMs === 0;
+}
+
+function setTimerVisualState(state) {
+  display.classList.toggle('holding', state === 'holding');
+  display.classList.toggle('armed', state === 'armed');
+}
+
+function cancelHold() {
+  if (holdTimeoutId !== null) {
+    clearTimeout(holdTimeoutId);
+    holdTimeoutId = null;
+  }
+  isHolding = false;
+  isArmed = false;
+  setTimerVisualState('idle');
+}
+
 function renderDisplay() {
   const formatted = formatMs(getCurrentElapsed());
   const [mainPart, msPart = '000'] = formatted.split('.');
@@ -104,7 +128,7 @@ function tick() {
 }
 
 function start() {
-  if (running || elapsedMs !== 0) {
+  if (!canStart()) {
     return;
   }
   running = true;
@@ -211,8 +235,13 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
     if (running) {
       pause();
-    } else {
-      start();
+    } else if (!event.repeat && !isHolding && canStart()) {
+      isHolding = true;
+      setTimerVisualState('holding');
+      holdTimeoutId = setTimeout(() => {
+        isArmed = true;
+        setTimerVisualState('armed');
+      }, HOLD_THRESHOLD_MS);
     }
   }
 
@@ -227,6 +256,20 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+document.addEventListener('keyup', (event) => {
+  if (event.code !== 'Space' || !isHolding) {
+    return;
+  }
+  const shouldStart = isArmed;
+  cancelHold();
+  if (shouldStart) {
+    start();
+  }
+});
+
+window.addEventListener('blur', cancelHold);
+
 renderDisplay();
 renderSaved();
 syncButtons();
+
