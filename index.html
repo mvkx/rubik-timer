@@ -32,8 +32,7 @@
 
       <div class="controls">
         <button id="startPauseBtn" type="button">Start</button>
-        <button id="resetBtn" type="button">Reset</button>
-        <button id="saveBtn" type="button" disabled>Save Time</button>
+        <button id="resetBtn" type="button" hidden>DNF</button>
       </div>
     </main>
   </div>
@@ -41,8 +40,8 @@
   <div class="help-widget">
     <button type="button" class="help-icon" aria-label="Help" aria-describedby="helpPanel">?</button>
     <div id="helpPanel" class="help-panel" role="tooltip">
-      <p>Keybinds: Space = Start/Stop, R = Reset, S = Save Time</p>
-      <p>Resetting a running or unsaved solve logs it as a DNF. Start again after Reset or Save Time.</p>
+      <p>Keybinds: Space = Start/Stop, S = Save, R = DNF</p>
+      <p>The main button cycles Start, Stop, Save. DNF logs a running or unsaved solve as a DNF. Start again after Save or DNF.</p>
       <p>All saved times stay in your browser via local storage.</p>
     </div>
   </div>

@@ -2,7 +2,6 @@ const STORAGE_KEY = 'local_stopwatch_saved_times_ms_v1';
 const display = document.getElementById('display');
 const startPauseBtn = document.getElementById('startPauseBtn');
 const resetBtn = document.getElementById('resetBtn');
-const saveBtn = document.getElementById('saveBtn');
 const clearBtn = document.getElementById('clearBtn');
 const averageEl = document.getElementById('average');
 const ao12El = document.getElementById('ao12');
@@ -115,10 +114,9 @@ function renderSaved() {
 }
 
 function syncButtons() {
-  const locked = !running && elapsedMs !== 0;
-  startPauseBtn.textContent = running ? 'Stop' : 'Start';
-  startPauseBtn.disabled = locked;
-  saveBtn.disabled = running || getCurrentElapsed() === 0;
+  const stopped = !running && elapsedMs !== 0;
+  startPauseBtn.textContent = running ? 'Stop' : stopped ? 'Save' : 'Start';
+  resetBtn.hidden = !stopped;
 }
 
 function tick() {
@@ -216,15 +214,17 @@ function deleteSavedTime(index) {
 }
 
 startPauseBtn.addEventListener('click', () => {
+  startPauseBtn.blur();
   if (running) {
     pause();
-  } else {
+  } else if (canStart()) {
     start();
+  } else {
+    saveCurrentTime();
   }
 });
 
 resetBtn.addEventListener('click', reset);
-saveBtn.addEventListener('click', saveCurrentTime);
 clearBtn.addEventListener('click', clearSavedTimes);
 
 savedListEl.addEventListener('click', (event) => {
@@ -274,6 +274,9 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('keyup', (event) => {
+  if (event.code === 'Space') {
+    event.preventDefault();
+  }
   if (event.code !== 'Space' || !isHolding) {
     return;
   }
