@@ -1,12 +1,5 @@
 # Rubik Timer — TODO
 
-## Done
-- DNF on reset, WCA-style trimmed averages (AO5/12/50/100)
-- Hold-to-start spacebar (500ms arm, red/green feedback)
-- Per-solve delete (hover-reveal, always-visible on touch)
-- Scrollable saved-times panel with pinned header/clear button
-- Help icon with hover/focus panel (keybinds, DNF/lock behavior, storage note)
-
 ## High value
 - [ ] Scramble generator — WCA-style random scramble shown above the timer, regenerated after each save/reset
 - [ ] +2 penalty — second penalty tier alongside DNF; adds 2s to the solve, stays a valid number in averages (vs. DNF which is excluded/worst-case)
