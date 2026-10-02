@@ -100,7 +100,7 @@ body {
 
 .saved-list li {
   display: grid;
-  grid-template-columns: 4.5ch 1fr max-content;
+  grid-template-columns: 4.5ch 1fr auto;
   column-gap: 0.35em;
   align-items: baseline;
   width: max-content;
@@ -169,6 +169,30 @@ body {
   cursor: pointer;
 }
 
+.saved-line-actions {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25em;
+}
+
+.saved-line-plus2 {
+  border: none;
+  background: none;
+  padding: 0 0.15em;
+  font-size: 0.6em;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 120ms ease, color 120ms ease;
+}
+
+.saved-line-plus2:hover,
+.saved-line-plus2.active {
+  background: none;
+  color: var(--accent);
+}
+
 .saved-line-delete {
   border: none;
   background: none;
@@ -186,13 +210,16 @@ body {
 }
 
 .saved-list li:hover .saved-line-delete,
+.saved-list li:hover .saved-line-plus2,
+.saved-line-plus2:focus-visible,
 .saved-line-delete:focus-visible {
   opacity: 1;
 }
 
 /* hover doesn't exist on touch devices, so keep the control reachable there */
 @media (hover: none), (pointer: coarse) {
-  .saved-line-delete {
+  .saved-line-delete,
+  .saved-line-plus2 {
     opacity: 1;
   }
 }
@@ -239,6 +266,14 @@ h1 {
   transition: color 80ms ease;
 }
 
+.time.inspecting {
+  color: var(--accent);
+}
+
+.time.overtime {
+  color: var(--dnf);
+}
+
 .time.holding {
   color: var(--dnf);
 }
@@ -270,6 +305,12 @@ h1 {
 
 .time-sep {
   font-size: 0.333em;
+}
+
+.time-penalty {
+  font-size: 0.333em;
+  margin-left: 0.4em;
+  color: var(--dnf);
 }
 
 .controls {
@@ -340,11 +381,41 @@ button:disabled {
   color: var(--dnf);
 }
 
-.help-widget {
+.widgets {
   position: fixed;
   right: 1rem;
   bottom: 1rem;
   z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.help-widget {
+  position: relative;
+}
+
+.help-panel.settings-panel {
+  width: max-content;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.setting input {
+  width: 1.1em;
+  height: 1.1em;
+  margin: 0;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.setting:last-child {
+  margin-bottom: 0;
 }
 
 .help-icon {
@@ -382,6 +453,16 @@ button:disabled {
 
 .help-panel p {
   margin: 0 0 0.5rem;
+}
+
+/* Keeps :hover alive while the pointer crosses the gap between icon and panel. */
+.help-panel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 0.5rem;
 }
 
 .help-panel p:last-child {

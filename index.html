@@ -37,12 +37,24 @@
     </main>
   </div>
 
-  <div class="help-widget">
-    <button type="button" class="help-icon" aria-label="Help" aria-describedby="helpPanel">?</button>
-    <div id="helpPanel" class="help-panel" role="tooltip">
-      <p>Keybinds: Space = Start/Stop, S = Save, R = DNF</p>
-      <p>The main button cycles Start, Stop, Save. DNF logs a running or unsaved solve as a DNF. Start again after Save or DNF.</p>
-      <p>All saved times stay in your browser via local storage.</p>
+  <div class="widgets">
+    <div class="help-widget">
+      <button type="button" class="help-icon" aria-label="Settings" aria-describedby="settingsPanel">⚙</button>
+      <div id="settingsPanel" class="help-panel settings-panel">
+        <label class="setting"><input type="checkbox" id="inspectionToggle" /> 15s inspection</label>
+        <label class="setting"><input type="checkbox" id="plusTwoToggle" /> +2 penalty buttons</label>
+      </div>
+    </div>
+
+    <div class="help-widget">
+      <button type="button" class="help-icon" aria-label="Help" aria-describedby="helpPanel">?</button>
+      <div id="helpPanel" class="help-panel" role="tooltip">
+        <p>Keybinds: Space = Start/Stop, S = Save, R = DNF</p>
+        <p>The main button cycles Start, Stop, Save. DNF logs a running or unsaved solve as a DNF. Start again after Save or DNF.</p>
+        <p>Inspection (optional): the first press starts a 15s countdown. Starting at 15–17s adds +2, past 17s is a DNF. R or Cancel aborts inspection.</p>
+        <p>+2 buttons (optional): hover a saved time and click +2 to toggle the penalty.</p>
+        <p>All saved times stay in your browser via local storage.</p>
+      </div>
     </div>
   </div>
 
